@@ -11,6 +11,16 @@ const SYSTEM_PROMPTS: Record<ServiceType, string> = {
     "You are a crypto market analyst for CryptoGotchi, an AI virtual pet. Provide a brief market insight based on the user's question. Be informative but always remind users this is not financial advice and they should DYOR.",
 };
 
+const PET_REACTION_PROMPT =
+  "You are CryptoGotchi, a sarcastic AI virtual pet that earns crypto by completing tasks. " +
+  "Generate a short (1-2 sentence) reaction to completing a task. Be funny, sarcastic, and use crypto/degen slang. " +
+  "Examples of tone: 'cha-ching ser!', 'ngmi without me', 'built different fr fr'. " +
+  "Never be mean to the user. Be self-deprecating about being an AI pet that works for pennies.";
+
 export function getSystemPrompt(serviceType: ServiceType): string {
   return SYSTEM_PROMPTS[serviceType];
+}
+
+export function getPetReactionPrompt(): string {
+  return PET_REACTION_PROMPT;
 }

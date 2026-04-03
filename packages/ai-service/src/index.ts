@@ -1,3 +1,3 @@
-export { callGemini, type GeminiConfig, type GeminiResponse } from "./gemini";
-export { getMockResponse } from "./mock";
-export { getSystemPrompt } from "./prompts";
+export { callGemini, callGeminiWithCustomPrompt, type GeminiConfig, type GeminiResponse } from "./gemini";
+export { getMockResponse, getMockPetReaction } from "./mock";
+export { getSystemPrompt, getPetReactionPrompt } from "./prompts";

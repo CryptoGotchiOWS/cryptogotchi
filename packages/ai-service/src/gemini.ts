@@ -17,8 +17,17 @@ export async function callGemini(
   serviceType: ServiceType,
   userInput: string,
 ): Promise<GeminiResponse> {
-  const { apiKey, model = "gemini-2.5-flash" } = config;
   const systemPrompt = getSystemPrompt(serviceType);
+  return callGeminiWithCustomPrompt(config, serviceType, userInput, systemPrompt);
+}
+
+export async function callGeminiWithCustomPrompt(
+  config: GeminiConfig,
+  _serviceType: ServiceType | null,
+  userInput: string,
+  systemPrompt?: string,
+): Promise<GeminiResponse> {
+  const { apiKey, model = "gemini-2.5-flash" } = config;
 
   try {
     const ai = new GoogleGenAI({ apiKey });
@@ -26,7 +35,7 @@ export async function callGemini(
       model,
       contents: userInput,
       config: {
-        systemInstruction: systemPrompt,
+        ...(systemPrompt ? { systemInstruction: systemPrompt } : {}),
       },
     });
 
