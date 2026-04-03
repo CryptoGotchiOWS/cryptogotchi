@@ -5,7 +5,7 @@ export const FACILITATOR_URL = "https://x402.org/facilitator";
 
 export const SERVICE_PRICES: Record<string, string> = {
   summarize: "0.01",
-  fortune: "0.005",
+  fortune: "0.01",
   "code-review": "0.02",
   crypto: "0.01",
 };
