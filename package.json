@@ -1,0 +1,14 @@
+{
+  "name": "cryptogotchi",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.3",
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "pnpm@10.28.1"
+}
