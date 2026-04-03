@@ -3,6 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": ["GEMINI_API_KEY", "X402_MOCK", "X402_FACILITATOR_URL", "PAY_TO_ADDRESS"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "dev": {
