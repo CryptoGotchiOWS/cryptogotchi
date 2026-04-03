@@ -145,9 +145,17 @@ function createLiveHandler(
   let wrappedHandler: RouteHandler | null = null;
 
   return async (req: NextRequest) => {
-    if (!wrappedHandler) {
-      wrappedHandler = await withX402Live(handler, routeConfig);
+    try {
+      if (!wrappedHandler) {
+        wrappedHandler = await withX402Live(handler, routeConfig);
+      }
+      return wrappedHandler(req);
+    } catch (err) {
+      console.error("[x402] Payment gate initialization failed:", err);
+      return NextResponse.json(
+        { error: "Payment service unavailable" },
+        { status: 503 },
+      );
     }
-    return wrappedHandler(req);
   };
 }

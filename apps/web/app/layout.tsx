@@ -21,6 +21,16 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "CryptoGotchi - AI Virtual Pet",
   description: "AI-powered virtual pet that earns crypto via x402 payments",
+  keywords: ["cryptogotchi", "virtual pet", "x402", "crypto", "AI"],
+  authors: [{ name: "CryptoGotchi Team" }],
+  icons: { icon: "/favicon.svg" },
+  openGraph: {
+    title: "CryptoGotchi - AI Virtual Pet",
+    description: "AI-powered virtual pet that earns crypto via x402 payments",
+    type: "website",
+  },
+  twitter: { card: "summary" },
+  other: { "theme-color": "#E2E8E6" },
 };
 
 export default function RootLayout({

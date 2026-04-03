@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ServiceConfig, ServiceType, ServiceResponse } from "@cryptogotchi/shared";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 
 interface ServiceCardProps {
   service: ServiceConfig;
@@ -40,6 +40,7 @@ export default function ServiceCard({
 }: ServiceCardProps) {
   const [input, setInput] = useState("");
   const [language, setLanguage] = useState("javascript");
+  const shouldReduceMotion = useReducedMotion();
 
   const handleSubmit = () => {
     const body: Record<string, unknown> = {};
@@ -150,9 +151,9 @@ export default function ServiceCard({
       <AnimatePresence>
         {petReaction && !result && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, height: 0 }}
             className="font-pixel text-[7px] text-dusty-sage italic"
           >
             &ldquo;{petReaction}&rdquo;
@@ -171,9 +172,9 @@ export default function ServiceCard({
       <AnimatePresence>
         {result && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
             <div className="bg-fog-gray rounded-lg p-3 max-h-48 overflow-y-auto custom-scrollbar">

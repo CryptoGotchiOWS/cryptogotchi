@@ -36,27 +36,26 @@ let _initFailed = false;
 
 async function getOrCreateServer() {
   if (_serverInstance) return _serverInstance;
-  if (_initFailed) return null;
+  if (_initFailed) throw new Error("[x402] Live mode init previously failed — refusing to serve without payment gate");
 
   try {
     // Use Function constructor to hide dynamic require from Turbopack static analysis
     const load = new Function("mod", "return require(mod)");
-    const x402Next = load("@x402/next");
-    const x402Evm = load("@x402/evm");
+    const x402Core = load("@x402/core/server");
+    const x402EvmExact = load("@x402/evm/exact/server");
 
     const facilitatorUrl =
       process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator";
 
-    const facilitator = new x402Next.HTTPFacilitatorClient(facilitatorUrl);
-    const server = new x402Next.x402ResourceServer(facilitator);
-    server.register("eip155:84532", new x402Evm.ExactEvmScheme());
+    const facilitator = new x402Core.HTTPFacilitatorClient(facilitatorUrl);
+    const server = new x402Core.x402ResourceServer(facilitator);
+    server.register("eip155:84532", new x402EvmExact.ExactEvmScheme());
 
     _serverInstance = server;
     return server;
   } catch (err) {
     _initFailed = true;
-    console.warn("[x402] Live mode packages not available:", (err as Error).message);
-    return null;
+    throw new Error(`[x402] Live mode packages not available: ${(err as Error).message}`);
   }
 }
 
@@ -64,30 +63,27 @@ export async function withX402Live(
   handler: RouteHandler,
   routeConfig: RouteConfig,
 ): Promise<RouteHandler> {
+  // Fail-closed: if server init or withX402 load fails, throw — never serve without payment gate
   const server = await getOrCreateServer();
 
-  if (!server) {
-    console.warn("[x402] Live mode unavailable, handler will run without payment gate");
-    return handler;
-  }
-
-  try {
-    const load = new Function("mod", "return require(mod)");
-    const { withX402 } = load("@x402/next");
-    return withX402(handler, routeConfig, server);
-  } catch {
-    return handler;
-  }
+  const load = new Function("mod", "return require(mod)");
+  const { withX402 } = load("@x402/next");
+  return withX402(handler, routeConfig, server);
 }
 
 export function createRouteConfig(price: string, description: string): RouteConfig {
+  const payTo = process.env.PAY_TO_ADDRESS;
+  if (!payTo) {
+    throw new Error("[x402] PAY_TO_ADDRESS env var is required in live mode");
+  }
+
   return {
     accepts: [
       {
         scheme: "exact",
         price,
         network: "eip155:84532",
-        payTo: process.env.PAY_TO_ADDRESS || "0x0000000000000000000000000000000000000000",
+        payTo,
       },
     ],
     description,

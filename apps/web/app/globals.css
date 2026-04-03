@@ -164,12 +164,13 @@ body {
 
 /* Service card hover */
 .service-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .service-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 /* Scrollbar styling */
@@ -184,4 +185,21 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: var(--color-dusty-sage);
   border-radius: 2px;
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-sprite-2,
+  .animate-sprite-3,
+  .animate-sprite-4,
+  .animate-float,
+  .animate-pixel-pulse {
+    animation: none;
+  }
+  .stat-bar-fill {
+    transition: none;
+  }
+  .service-card {
+    transition: none;
+  }
 }

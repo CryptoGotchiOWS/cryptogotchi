@@ -90,8 +90,11 @@ export default function GameClient() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-3 text-[10px] text-dark-gray/60 font-mono">
-        CryptoGotchi &mdash; OWS Hackathon 2026 &mdash; Powered by x402 + Gemini AI
+      <footer className="text-center py-3 text-[10px] text-dark-gray/60 font-mono flex flex-col items-center gap-1">
+        <span>CryptoGotchi &mdash; OWS Hackathon 2026</span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sage-mist/40 text-dusty-sage">
+          Powered by x402 + OWS + Gemini AI
+        </span>
       </footer>
 
       {/* Death overlay */}
