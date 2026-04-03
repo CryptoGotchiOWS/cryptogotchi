@@ -4,10 +4,10 @@ export const NETWORK_CAIP2 = "eip155:84532"; // Base Sepolia
 export const FACILITATOR_URL = "https://x402.org/facilitator";
 
 export const SERVICE_PRICES: Record<string, string> = {
-  summarize: "0.001",
-  fortune: "0.0005",
-  "code-review": "0.002",
-  crypto: "0.001",
+  summarize: "0.01",
+  fortune: "0.005",
+  "code-review": "0.02",
+  crypto: "0.01",
 };
 
 export const SERVICES: ServiceConfig[] = [
@@ -45,12 +45,17 @@ export const SERVICES: ServiceConfig[] = [
   },
 ];
 
+// Decay: "per minute" for demo speed. Multiplied by NEXT_PUBLIC_STAT_DECAY_SPEED env.
+// At speed=3, pet loses ~9 hunger/min → fully hungry in ~9 minutes (great for demo).
 export const DECAY_RATES = {
-  hunger: 2,      // points per hour
-  happiness: 1.5,
-  energy: 1,
+  hunger: 3,      // points per minute (base)
+  happiness: 2,
+  energy: 1.5,
   health: 0.5,
 };
+
+export const DEFAULT_DECAY_SPEED = 3; // env override: NEXT_PUBLIC_STAT_DECAY_SPEED
+export const DEFAULT_INITIAL_BALANCE = 10; // env override: NEXT_PUBLIC_INITIAL_BALANCE
 
 export const XP_PER_SERVICE = 10;
 export const XP_PER_LEVEL = 100;

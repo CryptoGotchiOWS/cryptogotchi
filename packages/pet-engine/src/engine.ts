@@ -1,8 +1,19 @@
 import type { PetState, PetMood } from "@cryptogotchi/shared";
-import { DECAY_RATES, XP_PER_SERVICE, XP_PER_LEVEL } from "@cryptogotchi/shared";
+import {
+  DECAY_RATES,
+  DEFAULT_DECAY_SPEED,
+  DEFAULT_INITIAL_BALANCE,
+  XP_PER_SERVICE,
+  XP_PER_LEVEL,
+} from "@cryptogotchi/shared";
 import type { StatUpdate } from "./types";
 
 export function createInitialPetState(name: string): PetState {
+  const initialBalance =
+    typeof globalThis?.process?.env?.NEXT_PUBLIC_INITIAL_BALANCE === "string"
+      ? Number(process.env.NEXT_PUBLIC_INITIAL_BALANCE)
+      : DEFAULT_INITIAL_BALANCE;
+
   return {
     name,
     hunger: 80,
@@ -12,7 +23,7 @@ export function createInitialPetState(name: string): PetState {
     mood: "happy",
     level: 1,
     xp: 0,
-    balance: 0,
+    balance: initialBalance,
     lastUpdated: Date.now(),
   };
 }
@@ -41,14 +52,19 @@ export function getMood(state: PetState): PetMood {
 
 export function applyDecay(state: PetState): PetState {
   const now = Date.now();
-  const hoursElapsed = (now - state.lastUpdated) / (1000 * 60 * 60);
-  if (hoursElapsed < 0.01) return state;
+  const minutesElapsed = (now - state.lastUpdated) / (1000 * 60);
+  if (minutesElapsed < 0.1) return state;
+
+  const speed =
+    typeof globalThis?.process?.env?.NEXT_PUBLIC_STAT_DECAY_SPEED === "string"
+      ? Number(process.env.NEXT_PUBLIC_STAT_DECAY_SPEED)
+      : DEFAULT_DECAY_SPEED;
 
   const newState = updateStats(state, {
-    hunger: state.hunger - DECAY_RATES.hunger * hoursElapsed,
-    happiness: state.happiness - DECAY_RATES.happiness * hoursElapsed,
-    energy: state.energy - DECAY_RATES.energy * hoursElapsed,
-    health: state.health - DECAY_RATES.health * hoursElapsed,
+    hunger: state.hunger - DECAY_RATES.hunger * speed * minutesElapsed,
+    happiness: state.happiness - DECAY_RATES.happiness * speed * minutesElapsed,
+    energy: state.energy - DECAY_RATES.energy * speed * minutesElapsed,
+    health: state.health - DECAY_RATES.health * speed * minutesElapsed,
   });
 
   return { ...newState, mood: getMood(newState) };
