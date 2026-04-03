@@ -10,12 +10,13 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@cryptogotchi/ai-service": "workspace:*",
+    "@cryptogotchi/pet-engine": "workspace:*",
+    "@cryptogotchi/shared": "workspace:*",
+    "motion": "^12.38.0",
     "next": "16.2.2",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "@cryptogotchi/shared": "workspace:*",
-    "@cryptogotchi/pet-engine": "workspace:*",
-    "@cryptogotchi/ai-service": "workspace:*"
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -26,5 +27,10 @@
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "@x402/core": "^2.3.0",
+    "@x402/evm": "^2.0.0",
+    "@x402/next": "^2.3.0"
   }
 }
