@@ -28,6 +28,21 @@ function getSpriteConfig(mood: PetMood, balanceState: BalanceState): SpriteConfi
   }
 }
 
+function getBreatheClass(mood: PetMood, balanceState: BalanceState): string {
+  if (balanceState === "dead") return "";
+  switch (mood) {
+    case "happy":
+    case "excited":
+    case "hungry":
+      return "animate-breathe-fast";
+    case "sad":
+    case "sick":
+      return "animate-breathe-slow";
+    default:
+      return "animate-breathe";
+  }
+}
+
 interface PetProps {
   mood: PetMood;
   balanceState: BalanceState;
@@ -45,9 +60,11 @@ export default function Pet({ mood, balanceState, size = 160 }: PetProps) {
           ? "animate-sprite-3"
           : "animate-sprite-4";
 
+  const breatheClass = getBreatheClass(mood, balanceState);
+
   return (
     <div
-      className={`animate-float pixel-art ${animClass}`}
+      className={`${breatheClass} pixel-art ${animClass}`}
       style={{
         width: size,
         height: size,

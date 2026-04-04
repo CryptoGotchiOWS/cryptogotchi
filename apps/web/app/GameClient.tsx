@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import type { ServiceType } from "@cryptogotchi/shared";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import type { ServiceType, PetAction } from "@cryptogotchi/shared";
 import { usePetState } from "../hooks/usePetState";
 import { useServices } from "../hooks/useServices";
 import { useAutoIncome } from "../hooks/useAutoIncome";
 import { usePetActions } from "../hooks/usePetActions";
+import { useAudio } from "../hooks/useAudio";
+import { useAchievements } from "../hooks/useAchievements";
 import PetScreen from "../components/pet/PetScreen";
 import PetActions from "../components/pet/PetActions";
 import DeathScreen from "../components/pet/DeathScreen";
@@ -15,7 +17,9 @@ import ServiceShop from "../components/services/ServiceShop";
 import Dashboard from "../components/dashboard/Dashboard";
 import TransactionLog from "../components/dashboard/TransactionLog";
 import CustomerToast from "../components/effects/CustomerToast";
+import AchievementToast from "../components/effects/AchievementToast";
 import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
+import AudioToggle from "../components/ui/AudioToggle";
 
 const REACTION_TYPES: ServiceType[] = ["summarize", "fortune", "code-review", "crypto"];
 const REACTION_EXPIRY_MS = 8000;
@@ -64,6 +68,13 @@ const MOOD_BG_MAP: Record<string, string> = {
   sick: "mood-bg-sick",
 };
 
+const ACTION_SOUNDS: Record<PetAction, "feed" | "play" | "sleep" | "medicine"> = {
+  feed: "feed",
+  play: "play",
+  sleep: "sleep",
+  medicine: "medicine",
+};
+
 export default function GameClient() {
   const { state, mood, balanceState, processIncome, careAction, revive } = usePetState();
   const { callService, getServiceState, transactions, clearResult, addTransaction } = useServices(processIncome);
@@ -76,6 +87,74 @@ export default function GameClient() {
   });
 
   const latestReaction = useLatestReaction(getServiceState);
+  const { muted, toggleMute, play } = useAudio();
+
+  // Track care actions + revive + manual service usage for achievements
+  const [totalCareActions, setTotalCareActions] = useState(0);
+  const [hasRevived, setHasRevived] = useState(false);
+  const [manualServiceTypes, setManualServiceTypes] = useState<Set<ServiceType>>(new Set());
+
+  // Wrap callService to track manual service types for achievements
+  const callServiceTracked = useCallback(
+    async (type: ServiceType, body: Record<string, unknown>) => {
+      setManualServiceTypes((prev) => {
+        if (prev.has(type)) return prev;
+        const next = new Set(prev);
+        next.add(type);
+        return next;
+      });
+      return callService(type, body);
+    },
+    [callService],
+  );
+
+  // Wrap performAction to count + play SFX
+  const performActionWithAudio = useCallback((type: PetAction) => {
+    performAction(type);
+    setTotalCareActions((prev) => prev + 1);
+    play(ACTION_SOUNDS[type]);
+  }, [performAction, play]);
+
+  // Wrap revive to track + play SFX
+  const reviveWithAudio = useCallback(() => {
+    revive();
+    setHasRevived(true);
+    play("revive");
+  }, [revive, play]);
+
+  // Play death sound when pet dies
+  const wasDead = useRef(false);
+  useEffect(() => {
+    if (isDead && !wasDead.current) {
+      play("death");
+    }
+    wasDead.current = isDead;
+  }, [isDead, play]);
+
+  // Play customer arrival sound
+  const prevCustomerCount = useRef(0);
+  useEffect(() => {
+    if (autoIncome.totalCustomers > prevCustomerCount.current && prevCustomerCount.current > 0) {
+      play("customerArrival");
+    }
+    prevCustomerCount.current = autoIncome.totalCustomers;
+  }, [autoIncome.totalCustomers, play]);
+
+  // Achievements
+  const { achievements, latestUnlock } = useAchievements({
+    state,
+    totalCustomers: autoIncome.totalCustomers,
+    manualServiceTypes,
+    totalCareActions,
+    hasRevived,
+  });
+
+  // Play levelUp sound on achievement unlock
+  useEffect(() => {
+    if (latestUnlock) {
+      play("levelUp");
+    }
+  }, [latestUnlock, play]);
 
   // Poll-based: derive hasRecentCustomer from a nowMs counter + lastEvent timestamp
   const [nowMs, setNowMs] = useState(0);
@@ -100,7 +179,10 @@ export default function GameClient() {
         <h1 className="font-pixel text-sm sm:text-base text-charcoal">
           CryptoGotchi
         </h1>
-        <WalletInfo state={state} balanceState={balanceState} />
+        <div className="flex items-center gap-3">
+          <AudioToggle muted={muted} onToggle={toggleMute} />
+          <WalletInfo state={state} balanceState={balanceState} />
+        </div>
       </header>
 
       {/* Main content */}
@@ -117,7 +199,7 @@ export default function GameClient() {
             <PetActions
               cooldowns={cooldowns}
               canPerform={canPerform}
-              performAction={performAction}
+              performAction={performActionWithAudio}
             />
           </div>
           <div className="w-full lg:w-64">
@@ -127,7 +209,7 @@ export default function GameClient() {
 
         {/* Services */}
         <ServiceShop
-          callService={callService}
+          callService={callServiceTracked}
           getServiceState={getServiceState}
           clearResult={clearResult}
           customersByService={autoIncome.customersByService}
@@ -139,6 +221,7 @@ export default function GameClient() {
             state={state}
             transactions={transactions}
             totalCustomers={autoIncome.totalCustomers}
+            achievements={achievements}
           />
           <TransactionLog transactions={transactions} />
         </div>
@@ -155,11 +238,14 @@ export default function GameClient() {
       {/* Customer toast */}
       <CustomerToast event={autoIncome.lastEvent} />
 
+      {/* Achievement toast */}
+      <AchievementToast achievement={latestUnlock} />
+
       {/* Onboarding overlay */}
       <OnboardingOverlay />
 
       {/* Death overlay */}
-      <DeathScreen visible={isDead} onRevive={revive} />
+      <DeathScreen visible={isDead} onRevive={reviveWithAudio} />
     </div>
   );
 }

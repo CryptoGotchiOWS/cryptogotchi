@@ -26,7 +26,7 @@ export default function DeathScreen({ visible, onRevive }: DeathScreenProps) {
           role="dialog"
           aria-modal="true"
           aria-label="Pet has died"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-grayscale backdrop-blur-sm"
         >
           <motion.div
             initial={shouldReduceMotion ? false : { scale: 0.8, y: 20 }}
@@ -36,7 +36,7 @@ export default function DeathScreen({ visible, onRevive }: DeathScreenProps) {
           >
             {/* Dead sprite */}
             <div
-              className="w-[160px] h-[160px] pixel-art"
+              className="w-[160px] h-[160px] pixel-art bg-fog-gray rounded-lg"
               style={{
                 backgroundImage: "url(/sprites/dead.png)",
                 backgroundSize: "100% 100%",
@@ -44,7 +44,7 @@ export default function DeathScreen({ visible, onRevive }: DeathScreenProps) {
               }}
             />
 
-            <h2 className="font-pixel text-sm text-danger text-center">
+            <h2 className="font-pixel text-sm text-danger text-center animate-glitch">
               F in the chat
             </h2>
 
