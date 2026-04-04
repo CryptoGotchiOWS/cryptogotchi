@@ -187,6 +187,24 @@ pnpm build         # Production build
 
 ---
 
+## Live vs Mock
+
+| Feature | Vercel (Prod) | Localhost (Demo) |
+|---------|:------------:|:----------------:|
+| Pet Engine | LIVE | LIVE |
+| Gemini AI (4 services) | LIVE | LIVE |
+| x402 Payment | Mock | **LIVE (Base Sepolia)** |
+| OWS Wallet & Signing | Mock | **LIVE (~/.ows/)** |
+
+### Proof
+
+- **x402 TX Hash**: [`0x871c...5983`](https://sepolia.basescan.org/tx/0x871c9c20e5436bfe294c4da8acfa2b4e6e4842ac3fbccf67cad8d24ee0eb5983)
+- **Gemini AI**: 5/5 services pass with real AI responses (`proof/gemini-live-output.txt`)
+- **OWS CLI**: 7/8 demo steps pass on WSL (`proof/ows-demo-output.txt`)
+- **Full report**: [`proof/live-vs-mock.md`](proof/live-vs-mock.md)
+
+---
+
 ## Accessibility
 
 - Semantic HTML with ARIA labels (progressbar, dialog, aria-modal)
