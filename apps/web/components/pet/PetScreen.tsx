@@ -8,9 +8,10 @@ interface PetScreenProps {
   mood: PetMood;
   balanceState: BalanceState;
   petReaction?: string | null;
+  customerEvent?: boolean;
 }
 
-export default function PetScreen({ mood, balanceState, petReaction }: PetScreenProps) {
+export default function PetScreen({ mood, balanceState, petReaction, customerEvent }: PetScreenProps) {
   const glowClass =
     balanceState === "thriving"
       ? "glow-thriving"
@@ -41,7 +42,7 @@ export default function PetScreen({ mood, balanceState, petReaction }: PetScreen
             flex flex-col items-center justify-center gap-2
           `}
         >
-          <ChatBubble mood={mood} balanceState={balanceState} petReaction={petReaction} />
+          <ChatBubble mood={mood} balanceState={balanceState} petReaction={petReaction} customerEvent={customerEvent} />
           <Pet mood={mood} balanceState={balanceState} size={120} />
         </div>
       </div>

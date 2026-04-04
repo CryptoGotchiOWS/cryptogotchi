@@ -14,12 +14,18 @@ interface ServiceShopProps {
     reactionTimestamp: number;
   };
   clearResult: (type: ServiceType) => void;
+  customersByService?: Record<ServiceType, number>;
 }
 
-export default function ServiceShop({ callService, getServiceState, clearResult }: ServiceShopProps) {
+export default function ServiceShop({
+  callService,
+  getServiceState,
+  clearResult,
+  customersByService,
+}: ServiceShopProps) {
   return (
     <section>
-      <h2 className="font-pixel text-[10px] text-warm-brown mb-4">AI SERVICES</h2>
+      <h2 className="font-pixel text-[10px] text-warm-brown mb-4">YOUR PET&apos;S SERVICES</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {SERVICES.map((service) => {
           const state = getServiceState(service.type);
@@ -33,6 +39,7 @@ export default function ServiceShop({ callService, getServiceState, clearResult 
               petReaction={state.petReaction}
               onSubmit={callService}
               onClear={clearResult}
+              customers={customersByService?.[service.type] ?? 0}
             />
           );
         })}

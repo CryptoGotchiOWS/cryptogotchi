@@ -1,5 +1,23 @@
 export type PetMood = "happy" | "neutral" | "sad" | "hungry" | "sick" | "excited";
 
+export type PetAction = "feed" | "play" | "sleep" | "medicine";
+
+export interface PetActionEffect {
+  hunger?: number;
+  happiness?: number;
+  energy?: number;
+  health?: number;
+}
+
+export interface PetActionConfig {
+  type: PetAction;
+  label: string;
+  icon: string;
+  cost: number;
+  cooldown: number; // seconds
+  effects: PetActionEffect;
+}
+
 export type BalanceState = "thriving" | "normal" | "struggling" | "dying" | "dead";
 
 export interface PetState {

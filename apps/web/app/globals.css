@@ -187,13 +187,52 @@ body {
   border-radius: 2px;
 }
 
+/* Glass-morphism panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Mood-based gradient backgrounds */
+.mood-bg-happy {
+  background: linear-gradient(135deg, #EDEDED 0%, #F5E8E0 50%, #EFC6B4 100%);
+}
+
+.mood-bg-neutral {
+  background: linear-gradient(135deg, #EDEDED 0%, #E2E8E6 50%, #EDEDED 100%);
+}
+
+.mood-bg-sad {
+  background: linear-gradient(135deg, #E2E8E6 0%, #EDEDED 50%, #E2E8E6 100%);
+}
+
+.mood-bg-hungry {
+  background: linear-gradient(135deg, #EDEDED 0%, #F5E8E0 50%, #D5B295 100%);
+}
+
+.mood-bg-sick {
+  background: linear-gradient(135deg, #EDEDED 0%, #E2E8E6 30%, #9FB0AA 100%);
+}
+
+/* Breathing animation for pet */
+@keyframes breathe {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.02) translateY(-2px); }
+}
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
 /* Accessibility: reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-sprite-2,
   .animate-sprite-3,
   .animate-sprite-4,
   .animate-float,
-  .animate-pixel-pulse {
+  .animate-pixel-pulse,
+  .animate-breathe {
     animation: none;
   }
   .stat-bar-fill {
@@ -201,5 +240,9 @@ body {
   }
   .service-card {
     transition: none;
+  }
+  .glass-panel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }

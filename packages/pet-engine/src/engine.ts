@@ -1,4 +1,4 @@
-import type { PetState, PetMood, BalanceState } from "@cryptogotchi/shared";
+import type { PetState, PetMood, BalanceState, PetActionEffect } from "@cryptogotchi/shared";
 import {
   DECAY_RATES,
   DEFAULT_DECAY_SPEED,
@@ -83,6 +83,27 @@ export function getBalanceState(balance: number): BalanceState {
   if (balance > 0.5) return "struggling";
   if (balance > 0.1) return "dying";
   return "dead";
+}
+
+export function applyCareAction(
+  state: PetState,
+  effects: PetActionEffect,
+  cost: number,
+): PetState {
+  if (cost > 0 && state.balance < cost) return state;
+
+  const clamp = (val: number) => Math.max(0, Math.min(100, val));
+  const newState: PetState = {
+    ...state,
+    hunger: clamp(state.hunger + (effects.hunger ?? 0)),
+    happiness: clamp(state.happiness + (effects.happiness ?? 0)),
+    energy: clamp(state.energy + (effects.energy ?? 0)),
+    health: clamp(state.health + (effects.health ?? 0)),
+    balance: cost > 0 ? state.balance - cost : state.balance,
+    lastUpdated: Date.now(),
+  };
+
+  return { ...newState, mood: getMood(newState) };
 }
 
 export function processIncome(state: PetState, amount: number): PetState {

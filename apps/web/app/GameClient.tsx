@@ -1,19 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { ServiceType } from "@cryptogotchi/shared";
 import { usePetState } from "../hooks/usePetState";
 import { useServices } from "../hooks/useServices";
+import { useAutoIncome } from "../hooks/useAutoIncome";
+import { usePetActions } from "../hooks/usePetActions";
 import PetScreen from "../components/pet/PetScreen";
+import PetActions from "../components/pet/PetActions";
 import DeathScreen from "../components/pet/DeathScreen";
 import StatsPanel from "../components/stats/StatsPanel";
 import WalletInfo from "../components/stats/WalletInfo";
 import ServiceShop from "../components/services/ServiceShop";
 import Dashboard from "../components/dashboard/Dashboard";
 import TransactionLog from "../components/dashboard/TransactionLog";
+import CustomerToast from "../components/effects/CustomerToast";
+import OnboardingOverlay from "../components/onboarding/OnboardingOverlay";
 
 const REACTION_TYPES: ServiceType[] = ["summarize", "fortune", "code-review", "crypto"];
 const REACTION_EXPIRY_MS = 8000;
+const CUSTOMER_EVENT_WINDOW_MS = 5000;
 
 /**
  * Tracks the most recent pet reaction across all services.
@@ -49,14 +55,46 @@ function useLatestReaction(
   return reaction;
 }
 
+const MOOD_BG_MAP: Record<string, string> = {
+  happy: "mood-bg-happy",
+  excited: "mood-bg-happy",
+  neutral: "mood-bg-neutral",
+  sad: "mood-bg-sad",
+  hungry: "mood-bg-hungry",
+  sick: "mood-bg-sick",
+};
+
 export default function GameClient() {
-  const { state, mood, balanceState, processIncome, revive } = usePetState();
-  const { callService, getServiceState, transactions, clearResult } = useServices(processIncome);
+  const { state, mood, balanceState, processIncome, careAction, revive } = usePetState();
+  const { callService, getServiceState, transactions, clearResult, addTransaction } = useServices(processIncome);
+
+  const isDead = balanceState === "dead";
+  const autoIncome = useAutoIncome(processIncome, addTransaction, isDead);
+  const { cooldowns, canPerform, performAction } = usePetActions({
+    balance: state.balance,
+    careAction,
+  });
 
   const latestReaction = useLatestReaction(getServiceState);
 
+  // Poll-based: derive hasRecentCustomer from a nowMs counter + lastEvent timestamp
+  const [nowMs, setNowMs] = useState(0);
+  useEffect(() => {
+    const update = () => setNowMs(Date.now());
+    const interval = setInterval(update, 1000);
+    // Initial tick fires after 1s from the interval callback, not sync in effect body
+    return () => clearInterval(interval);
+  }, []);
+
+  const hasRecentCustomer = useMemo(() => {
+    if (!autoIncome.lastEvent || nowMs === 0) return false;
+    return nowMs - autoIncome.lastEvent.timestamp < CUSTOMER_EVENT_WINDOW_MS;
+  }, [nowMs, autoIncome.lastEvent]);
+
+  const moodBgClass = MOOD_BG_MAP[mood] ?? "mood-bg-neutral";
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className={`flex flex-col min-h-screen transition-colors duration-1000 ${moodBgClass}`}>
       {/* Header */}
       <header className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-8 py-4 bg-white/40 border-b border-sage-mist/50">
         <h1 className="font-pixel text-sm sm:text-base text-charcoal">
@@ -69,7 +107,19 @@ export default function GameClient() {
       <main className="flex-1 px-4 sm:px-8 py-6 flex flex-col gap-8 max-w-7xl mx-auto w-full">
         {/* Pet + Stats row */}
         <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6">
-          <PetScreen mood={mood} balanceState={balanceState} petReaction={latestReaction} />
+          <div className="flex flex-col items-center gap-4">
+            <PetScreen
+              mood={mood}
+              balanceState={balanceState}
+              petReaction={latestReaction}
+              customerEvent={hasRecentCustomer}
+            />
+            <PetActions
+              cooldowns={cooldowns}
+              canPerform={canPerform}
+              performAction={performAction}
+            />
+          </div>
           <div className="w-full lg:w-64">
             <StatsPanel state={state} />
           </div>
@@ -80,11 +130,16 @@ export default function GameClient() {
           callService={callService}
           getServiceState={getServiceState}
           clearResult={clearResult}
+          customersByService={autoIncome.customersByService}
         />
 
         {/* Dashboard + Transactions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Dashboard state={state} transactions={transactions} />
+          <Dashboard
+            state={state}
+            transactions={transactions}
+            totalCustomers={autoIncome.totalCustomers}
+          />
           <TransactionLog transactions={transactions} />
         </div>
       </main>
@@ -97,8 +152,14 @@ export default function GameClient() {
         </span>
       </footer>
 
+      {/* Customer toast */}
+      <CustomerToast event={autoIncome.lastEvent} />
+
+      {/* Onboarding overlay */}
+      <OnboardingOverlay />
+
       {/* Death overlay */}
-      <DeathScreen visible={balanceState === "dead"} onRevive={revive} />
+      <DeathScreen visible={isDead} onRevive={revive} />
     </div>
   );
 }
