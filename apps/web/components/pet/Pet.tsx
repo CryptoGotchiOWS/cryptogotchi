@@ -68,11 +68,10 @@ export default function Pet({ mood, balanceState, size = 160 }: PetProps) {
       style={{
         width: size,
         height: size,
-        backgroundImage: `url(${src}?v=11)`,
+        backgroundImage: `url(${src}?v=12)`,
         backgroundSize: `${frames * 100}% 100%`,
         backgroundRepeat: "no-repeat",
         backgroundPosition: "0 0",
-        mixBlendMode: "multiply",
       }}
       role="img"
       aria-label={`Pet is ${mood}`}

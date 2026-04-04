@@ -24,27 +24,10 @@ export default function PetScreen({ mood, balanceState, petReaction, customerEve
             : "glow-dead";
 
   return (
-    <div className="relative flex flex-col items-center">
-      {/* Shell container - scales down on very small screens */}
-      <div className="relative w-[240px] h-[330px] sm:w-[280px] sm:h-[380px]">
-        {/* Shell background */}
-        <div
-          className="absolute inset-0 pixel-art bg-contain bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/sprites/shell.png)" }}
-        />
-
-        {/* Screen area inside shell */}
-        <div
-          className={`
-            absolute top-[60px] left-[40px] right-[40px] bottom-[120px]
-            bg-sage-mist rounded-lg overflow-hidden
-            lcd-scanlines ${glowClass}
-            flex flex-col items-center justify-center gap-2
-          `}
-        >
-          <ChatBubble mood={mood} balanceState={balanceState} petReaction={petReaction} customerEvent={customerEvent} />
-          <Pet mood={mood} balanceState={balanceState} size={120} />
-        </div>
+    <div className="relative flex flex-col items-center gap-2">
+      <ChatBubble mood={mood} balanceState={balanceState} petReaction={petReaction} customerEvent={customerEvent} />
+      <div className={`${glowClass} rounded-full`}>
+        <Pet mood={mood} balanceState={balanceState} size={160} />
       </div>
     </div>
   );
