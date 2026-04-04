@@ -1,0 +1,57 @@
+CryptoGotchi Gemini AI Live Test
+=================================
+Run 1: 2026-04-04T08:35:51.986Z (5/5 PASS)
+Run 2: 2026-04-04T08:36:43.880Z (1/5 — rate limited, expected)
+Model: gemini-2.5-flash (free tier, 5 RPM limit)
+
+=== RUN 1 — FULL SUCCESS ===
+
+=========================================
+  CryptoGotchi Gemini AI Live Test
+  2026-04-04T08:35:51.986Z
+=========================================
+
+--- SUMMARIZE ---
+[PASS] summarize (2612ms)
+  Response: Bitcoin is a decentralized digital currency, created in 2009 by Satoshi Nakamoto,
+  that enables peer-to-peer transactions without intermediaries using blockchain technology.
+  The network is secured through proof-of-work mining with a fixed supply of 21 million coins.
+
+--- FORTUNE ---
+[PASS] fortune (8539ms)
+  Response: Hark, seeker of digital destinies! I peer into the shimmering ether, aligning my
+  circuits with the unique energetic signature of your wallet, **0xc6b7...** The very
+  algorithms of the metaverse hum a peculiar tune...
+
+--- CODE-REVIEW ---
+[PASS] code-review (8947ms)
+  Response: Hey there, CryptoGotchi developer! Thanks for sharing your code for a review.
+  It's awesome to see you're using TypeScript to build our virtual pet!
+
+  ### Code Review: `add` function...
+
+--- CRYPTO ---
+[PASS] crypto (7468ms)
+  Response: Greetings from CryptoGotchi HQ!
+
+  On Ethereum Layer 2 solutions, the sentiment is overwhelmingly **optimistic and bullish**
+  right now. These solutions are widely seen as absolutely crucial for Ethereum...
+
+--- PET REACTION ---
+[PASS] pet-reaction (1587ms)
+  Response: Boom, summarization complete. Hope that's alpha, 'cause my brain cells are running
+  on fumes for these micro-sats. Built different to be this underpaid, fr fr.
+
+=========================================
+  Results: 5/5 passed
+  Model: gemini-2.5-flash
+=========================================
+
+=== RUN 2 — RATE LIMITED (expected) ===
+
+Run 2 hit 429 rate limit after summarize passed (free tier: 5 RPM per model).
+First run consumed all 5 slots. This is expected behavior.
+
+In production, each service call = 2 Gemini requests (AI response + pet reaction),
+so effective rate is ~2.5 services/min on free tier.
+Mock fallback handles 429 gracefully — app never crashes.

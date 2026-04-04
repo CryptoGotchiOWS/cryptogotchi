@@ -9,6 +9,7 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "x402:demo": "tsx --env-file=../../.env.local scripts/live-x402-demo.ts",
+    "gemini:test": "tsx --env-file=../../.env.local scripts/test-gemini-live.ts",
     "ows:demo": "echo 'Run via WSL: wsl bash apps/web/scripts/ows-demo.sh' && bash scripts/ows-demo.sh"
   },
   "dependencies": {

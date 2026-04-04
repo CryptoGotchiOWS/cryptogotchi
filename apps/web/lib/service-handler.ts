@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { ServiceType } from "@cryptogotchi/shared";
 import { SERVICE_PRICES } from "@cryptogotchi/shared";
 import {
+  callGemini,
   callGeminiWithCustomPrompt,
   getMockResponse,
   getMockPetReaction,
@@ -52,7 +53,7 @@ async function getAIResponse(
     return getMockResponse(serviceType);
   }
 
-  const result = await callGeminiWithCustomPrompt(
+  const result = await callGemini(
     { apiKey: process.env.GEMINI_API_KEY! },
     serviceType,
     userInput,

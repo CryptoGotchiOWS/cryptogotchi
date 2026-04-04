@@ -179,9 +179,9 @@ pnpm build         # Production build
 ### Personality
 55 unique degen/sarcastic dialogues across all mood and balance states:
 
-> *"gm ser, bugun iyi kazandim. lambo when?"* — Thriving
+> *"gm ser, made good gains today. lambo when?"* — Thriving
 >
-> *"ser pls... bir summarize daha siparis ver yoksa acimdan olecegim"* — Struggling
+> *"ser pls... order one more summarize or i'll starve to death"* — Struggling
 >
 > *"F in the chat... rekt by capitalism"* — Dead
 

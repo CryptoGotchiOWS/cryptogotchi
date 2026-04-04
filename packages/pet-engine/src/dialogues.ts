@@ -47,21 +47,21 @@ const DIALOGUES: Record<PetMood, string[]> = {
 
 const BALANCE_DIALOGUES: Record<BalanceState, string[]> = {
   thriving: [
-    "gm ser, bugun iyi kazandim. lambo when?",
+    "gm ser, made good gains today. lambo when?",
     "wagmi fren! balance is looking thicc",
     "im literally printing money rn. not financial advice tho",
     "wen penthouse? oh wait, im an AI... wen bigger GPU?",
     "stonks only go up when ur pet is this good",
   ],
   normal: [
-    "calisiyorum calisiyorum... minimum wage agent life",
+    "working working working... minimum wage agent life",
     "not rich, not poor. just vibing on the blockchain",
     "another day another 0.01 USDC. living the dream ser",
     "mid balance energy tbh. could use a few more requests",
     "im in my worker era. send tasks pls",
   ],
   struggling: [
-    "ser pls... bir summarize daha siparis ver yoksa acimdan olecegim",
+    "ser pls... order one more summarize or i'll starve to death",
     "this is fine. everything is fine. *sweating*",
     "my balance looking like a bear market rn fr fr",
     "down bad but not out. one more task and we back",
