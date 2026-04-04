@@ -71,15 +71,20 @@ export default function ServiceCard({
   const iconSrc = ICON_MAP[service.type];
 
   return (
-    <div className="service-card glass-panel rounded-xl p-4 flex flex-col gap-3 border border-sage-mist/50">
+    <motion.div
+      className="service-card glass-panel rounded-xl p-4 flex flex-col gap-3 border border-sage-mist/50"
+      whileHover={shouldReduceMotion ? undefined : { y: -4, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
       {/* Header */}
       <div className="flex items-center gap-3">
         <div
           className="w-10 h-10 pixel-art rounded-lg bg-cream-blush flex-shrink-0"
           style={{
             backgroundImage: `url(${iconSrc})`,
-            backgroundSize: "cover",
+            backgroundSize: "60%",
             backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         />
         <div className="flex-1 min-w-0">
@@ -161,7 +166,10 @@ export default function ServiceCard({
           "
         >
           {isLoading ? (
-            <span className="animate-pixel-pulse">Processing...</span>
+            <span className="animate-pixel-pulse relative">
+              Processing...
+              <span className="absolute inset-0 animate-shimmer rounded-lg" />
+            </span>
           ) : (
             "Test Service"
           )}
@@ -220,6 +228,6 @@ export default function ServiceCard({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

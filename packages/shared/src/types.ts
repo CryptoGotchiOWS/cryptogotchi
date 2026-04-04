@@ -106,3 +106,23 @@ export type ServiceResponse =
   | FortuneResponse
   | CodeReviewResponse
   | CryptoResponse;
+
+// --- Achievement types ---
+
+export type AchievementId =
+  | "newborn"
+  | "first-meal"
+  | "crypto-whisperer"
+  | "diamond-hands"
+  | "survivor"
+  | "maximalist";
+
+export type AchievementRarity = "common" | "rare" | "epic" | "legendary";
+
+export interface Achievement {
+  id: AchievementId;
+  title: string;
+  description: string;
+  icon: string;
+  rarity: AchievementRarity;
+}

@@ -7,10 +7,10 @@ interface TransactionLogProps {
 }
 
 const SERVICE_ICONS: Record<ServiceType, string> = {
-  summarize: "📜",
-  fortune: "🔮",
-  "code-review": "💻",
-  crypto: "🪙",
+  summarize: "\uD83D\uDCDC",
+  fortune: "\uD83D\uDD2E",
+  "code-review": "\uD83D\uDCBB",
+  crypto: "\uD83D\uDCB0",
 };
 
 const STATUS_COLORS: Record<string, string> = {

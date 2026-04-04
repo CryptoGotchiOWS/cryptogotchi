@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import type { PetMood, BalanceState } from "@cryptogotchi/shared";
 import { getRandomDialogue, getBalanceDialogue, getCustomerDialogue } from "@cryptogotchi/pet-engine";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 
 interface ChatBubbleProps {
   mood: PetMood;
@@ -13,6 +14,7 @@ interface ChatBubbleProps {
 
 export default function ChatBubble({ mood, balanceState, petReaction, customerEvent }: ChatBubbleProps) {
   const [tick, setTick] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   // Rotate dialogues every 5 seconds via interval (setState only in callback, not synchronously)
   useEffect(() => {
@@ -31,9 +33,18 @@ export default function ChatBubble({ mood, balanceState, petReaction, customerEv
 
   return (
     <div className="chat-bubble max-w-[200px]">
-      <p className="font-pixel text-[7px] leading-relaxed text-charcoal">
-        {message}
-      </p>
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={message}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="font-pixel text-[7px] leading-relaxed text-charcoal"
+        >
+          {message}
+        </motion.p>
+      </AnimatePresence>
     </div>
   );
 }

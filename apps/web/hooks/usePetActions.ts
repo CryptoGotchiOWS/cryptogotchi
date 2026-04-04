@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { PetAction, PetActionEffect } from "@cryptogotchi/shared";
 import { PET_ACTIONS } from "@cryptogotchi/shared";
 
@@ -16,6 +16,13 @@ export function usePetActions({ balance, careAction }: UsePetActionsOptions) {
     sleep: 0,
     medicine: 0,
   });
+
+  // Ref mirrors cooldowns so performAction always reads the latest values
+  const cooldownsRef = useRef(cooldowns);
+  useEffect(() => { cooldownsRef.current = cooldowns; }, [cooldowns]);
+
+  const balanceRef = useRef(balance);
+  useEffect(() => { balanceRef.current = balance; }, [balance]);
 
   // Tick cooldowns every second
   useEffect(() => {
@@ -49,12 +56,19 @@ export function usePetActions({ balance, careAction }: UsePetActionsOptions) {
   const performAction = useCallback(
     (type: PetAction) => {
       const config = PET_ACTIONS.find((a) => a.type === type);
-      if (!config || !canPerform(type)) return;
+      if (!config) return;
+
+      // Check against refs for real-time values (prevents double-click bypass)
+      if (cooldownsRef.current[type] > 0) return;
+      if (config.cost > 0 && balanceRef.current < config.cost) return;
+
+      // Immediately set cooldown via ref + state to block subsequent clicks
+      cooldownsRef.current = { ...cooldownsRef.current, [type]: config.cooldown };
+      setCooldowns((prev) => ({ ...prev, [type]: config.cooldown }));
 
       careAction(config.effects, config.cost);
-      setCooldowns((prev) => ({ ...prev, [type]: config.cooldown }));
     },
-    [canPerform, careAction],
+    [careAction],
   );
 
   return { cooldowns, canPerform, performAction };

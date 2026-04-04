@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useCallback, useReducer } from "react";
 import type { ServiceType, Transaction } from "@cryptogotchi/shared";
 import {
   SERVICES,
@@ -15,16 +15,14 @@ export interface CustomerEvent {
   timestamp: number;
 }
 
-interface AutoIncomeState {
-  lastEvent: CustomerEvent | null;
+interface Counters {
   totalCustomers: number;
   customersByService: Record<ServiceType, number>;
 }
 
 const STORAGE_KEY = "cryptogotchi-auto-income";
 
-const INITIAL_STATE: AutoIncomeState = {
-  lastEvent: null,
+const INITIAL_COUNTERS: Counters = {
   totalCustomers: 0,
   customersByService: {
     summarize: 0,
@@ -34,44 +32,49 @@ const INITIAL_STATE: AutoIncomeState = {
   },
 };
 
-// --- localStorage persistence via useSyncExternalStore ---
-let listeners: Array<() => void> = [];
+type CounterAction =
+  | { type: "HYDRATE"; payload: Counters }
+  | { type: "INCREMENT"; serviceType: ServiceType };
 
-function subscribe(callback: () => void) {
-  listeners = [...listeners, callback];
-  return () => {
-    listeners = listeners.filter((l) => l !== callback);
-  };
-}
-
-function getSnapshot(): AutoIncomeState {
-  if (typeof window === "undefined") return INITIAL_STATE;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return INITIAL_STATE;
-    const parsed = JSON.parse(raw) as AutoIncomeState;
-    // lastEvent is ephemeral, don't restore from storage
-    return { ...parsed, lastEvent: null };
-  } catch {
-    return INITIAL_STATE;
+function counterReducer(state: Counters, action: CounterAction): Counters {
+  switch (action.type) {
+    case "HYDRATE":
+      return action.payload;
+    case "INCREMENT":
+      return {
+        totalCustomers: state.totalCustomers + 1,
+        customersByService: {
+          ...state.customersByService,
+          [action.serviceType]: (state.customersByService[action.serviceType] ?? 0) + 1,
+        },
+      };
+    default:
+      return state;
   }
 }
 
-function getServerSnapshot(): AutoIncomeState {
-  return INITIAL_STATE;
+function loadFromStorage(): Counters {
+  if (typeof window === "undefined") return INITIAL_COUNTERS;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return INITIAL_COUNTERS;
+    const parsed = JSON.parse(raw);
+    return {
+      totalCustomers: parsed.totalCustomers ?? 0,
+      customersByService: { ...INITIAL_COUNTERS.customersByService, ...parsed.customersByService },
+    };
+  } catch {
+    return INITIAL_COUNTERS;
+  }
 }
 
-function persistState(state: AutoIncomeState): void {
+function persistCounters(counters: Counters): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(counters));
   } catch {
     // localStorage full
   }
-}
-
-function emitChange() {
-  for (const l of listeners) l();
 }
 
 function randomInterval(): number {
@@ -89,84 +92,85 @@ export function useAutoIncome(
   addTransaction: (tx: Transaction) => void,
   isDead: boolean,
 ) {
-  // Persisted counters (totalCustomers, customersByService) survive refresh
-  const persisted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-
-  // Ephemeral lastEvent for toast (not persisted)
+  const [counters, dispatch] = useReducer(counterReducer, INITIAL_COUNTERS);
   const [lastEvent, setLastEvent] = useState<CustomerEvent | null>(null);
 
-  // Merge persisted counters into a combined state ref for the timer
-  const stateRef = useRef<AutoIncomeState>({ ...persisted, lastEvent: null });
+  // Hydrate once on mount (dispatch is not setState, passes lint)
+  const hydrateRef = useRef(false);
+  useEffect(() => {
+    if (hydrateRef.current) return;
+    hydrateRef.current = true;
+    dispatch({ type: "HYDRATE", payload: loadFromStorage() });
+  }, []);
 
-  // Keep refs in sync (only in effects)
+  // Persist counters when they change (skip initial render)
+  const persistPhaseRef = useRef(0);
+  useEffect(() => {
+    if (persistPhaseRef.current < 2) {
+      persistPhaseRef.current++;
+      return;
+    }
+    persistCounters(counters);
+  }, [counters]);
+
+  // Refs for timer callbacks
   const processIncomeRef = useRef(processIncome);
   useEffect(() => { processIncomeRef.current = processIncome; }, [processIncome]);
 
   const addTransactionRef = useRef(addTransaction);
   useEffect(() => { addTransactionRef.current = addTransaction; }, [addTransaction]);
 
-  // Self-scheduling timer managed entirely inside a single effect
+  // Stable callback used by timer
+  const handleTick = useCallback(() => {
+    const service = randomService();
+    const amount = parseFloat(service.price);
+    const now = Date.now();
+
+    processIncomeRef.current(amount);
+
+    const tx: Transaction = {
+      id: `auto-${now}-${Math.random().toString(36).slice(2, 6)}`,
+      serviceType: service.type,
+      amount: service.price,
+      timestamp: now,
+      status: "completed",
+    };
+    addTransactionRef.current(tx);
+
+    const event: CustomerEvent = {
+      serviceName: service.name,
+      serviceType: service.type,
+      amount,
+      timestamp: now,
+    };
+
+    setLastEvent(event);
+    dispatch({ type: "INCREMENT", serviceType: service.type });
+  }, []);
+
+  // Self-scheduling timer — depends ONLY on isDead
   useEffect(() => {
     if (isDead) return;
 
     let timerId: ReturnType<typeof setTimeout> | null = null;
 
-    function tick() {
-      const service = randomService();
-      const amount = parseFloat(service.price);
-      const now = Date.now();
-
-      // 1. Process income on pet state (balance + xp)
-      processIncomeRef.current(amount);
-
-      // 2. Create real transaction
-      const tx: Transaction = {
-        id: `auto-${now}-${Math.random().toString(36).slice(2, 6)}`,
-        serviceType: service.type,
-        amount: service.price,
-        timestamp: now,
-        status: "completed",
-      };
-      addTransactionRef.current(tx);
-
-      // 3. Update customer metrics + persist
-      const prev = stateRef.current;
-      const nextState: AutoIncomeState = {
-        lastEvent: {
-          serviceName: service.name,
-          serviceType: service.type,
-          amount,
-          timestamp: now,
-        },
-        totalCustomers: prev.totalCustomers + 1,
-        customersByService: {
-          ...prev.customersByService,
-          [service.type]: (prev.customersByService[service.type] ?? 0) + 1,
-        },
-      };
-      stateRef.current = nextState;
-      persistState(nextState);
-      emitChange();
-
-      // 4. Ephemeral toast event
-      setLastEvent(nextState.lastEvent);
-
-      timerId = setTimeout(tick, randomInterval());
+    function schedule() {
+      timerId = setTimeout(() => {
+        handleTick();
+        schedule();
+      }, randomInterval());
     }
 
-    // Sync stateRef with latest persisted data on (re)start
-    stateRef.current = { ...persisted, lastEvent: null };
-
-    timerId = setTimeout(tick, randomInterval());
+    schedule();
 
     return () => {
       if (timerId) clearTimeout(timerId);
     };
-  }, [isDead, persisted]);
+  }, [isDead, handleTick]);
 
   return {
     lastEvent,
-    totalCustomers: persisted.totalCustomers,
-    customersByService: persisted.customersByService,
+    totalCustomers: counters.totalCustomers,
+    customersByService: counters.customersByService,
   };
 }

@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import type { PetState, Transaction } from "@cryptogotchi/shared";
+import type { PetState, Transaction, Achievement } from "@cryptogotchi/shared";
 import { DEFAULT_INITIAL_BALANCE } from "@cryptogotchi/shared";
+
+interface AchievementDisplay extends Achievement {
+  unlockedAt: number | null;
+}
 
 interface DashboardProps {
   state: PetState;
   transactions: Transaction[];
   totalCustomers?: number;
+  achievements?: AchievementDisplay[];
 }
 
-export default function Dashboard({ state, transactions, totalCustomers = 0 }: DashboardProps) {
+export default function Dashboard({ state, transactions, totalCustomers = 0, achievements = [] }: DashboardProps) {
   const [aliveTime, setAliveTime] = useState("00:00:00");
   // Capture session start once on mount (inside effect to stay pure)
   const sessionStartRef = useRef(0);
@@ -42,6 +47,27 @@ export default function Dashboard({ state, transactions, totalCustomers = 0 }: D
         <MetricCard label="Customers" value={String(totalCustomers)} color="text-charcoal" />
         <MetricCard label="Session" value={aliveTime} color="text-dusty-sage" />
       </div>
+
+      {/* Achievement badges */}
+      {achievements.length > 0 && (
+        <div className="mt-4">
+          <h3 className="font-pixel text-[8px] text-dark-gray mb-2">ACHIEVEMENTS</h3>
+          <div className="flex gap-2 flex-wrap">
+            {achievements.map((a) => (
+              <span
+                key={a.id}
+                title={a.unlockedAt ? `${a.title}: ${a.description}` : `??? ${a.description}`}
+                className={`
+                  text-xl cursor-default transition-opacity
+                  ${a.unlockedAt ? "opacity-100" : "opacity-20 grayscale"}
+                `}
+              >
+                {a.icon}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

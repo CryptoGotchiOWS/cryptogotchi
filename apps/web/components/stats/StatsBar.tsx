@@ -31,7 +31,7 @@ export default function StatsBar({ label, value, icon }: StatsBarProps) {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label={`${label} ${Math.round(value)}%`}
-            className={`h-full rounded-full stat-bar-fill ${color}`}
+            className={`h-full rounded-full stat-bar-fill ${color}${value < 20 ? " animate-pulse" : ""}`}
             style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
           />
         </div>

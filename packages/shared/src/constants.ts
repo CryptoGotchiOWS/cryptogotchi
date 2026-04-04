@@ -1,4 +1,4 @@
-import type { ServiceConfig, PetActionConfig } from "./types";
+import type { ServiceConfig, PetActionConfig, Achievement } from "./types";
 
 export const NETWORK_CAIP2 = "eip155:84532"; // Base Sepolia
 export const FACILITATOR_URL = "https://x402.org/facilitator";
@@ -97,3 +97,48 @@ export const PET_ACTIONS: PetActionConfig[] = [
 
 export const AUTO_INCOME_INTERVAL_MIN = 20; // seconds
 export const AUTO_INCOME_INTERVAL_MAX = 40; // seconds
+
+export const ACHIEVEMENTS: Achievement[] = [
+  {
+    id: "newborn",
+    title: "Newborn",
+    description: "Play for 1 minute",
+    icon: "\uD83D\uDC23",
+    rarity: "common",
+  },
+  {
+    id: "first-meal",
+    title: "First Meal",
+    description: "Perform your first care action",
+    icon: "\uD83C\uDF56",
+    rarity: "common",
+  },
+  {
+    id: "crypto-whisperer",
+    title: "Crypto Whisperer",
+    description: "Test all 4 service types",
+    icon: "\uD83D\uDD2E",
+    rarity: "rare",
+  },
+  {
+    id: "diamond-hands",
+    title: "Diamond Hands",
+    description: "Play for 30 minutes",
+    icon: "\uD83D\uDC8E",
+    rarity: "rare",
+  },
+  {
+    id: "survivor",
+    title: "Survivor",
+    description: "Die and revive",
+    icon: "\uD83D\uDC80",
+    rarity: "epic",
+  },
+  {
+    id: "maximalist",
+    title: "Maximalist",
+    description: "All stats above 80%",
+    icon: "\uD83D\uDC51",
+    rarity: "legendary",
+  },
+];
