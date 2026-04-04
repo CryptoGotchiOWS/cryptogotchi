@@ -4,10 +4,10 @@ export const NETWORK_CAIP2 = "eip155:84532"; // Base Sepolia
 export const FACILITATOR_URL = "https://x402.org/facilitator";
 
 export const SERVICE_PRICES: Record<string, string> = {
-  summarize: "0.01",
-  fortune: "0.01",
-  "code-review": "0.02",
-  crypto: "0.01",
+  summarize: "0.50",
+  fortune: "0.50",
+  "code-review": "1.00",
+  crypto: "0.50",
 };
 
 export const SERVICES: ServiceConfig[] = [
