@@ -81,10 +81,11 @@ export default function ServiceCard({
         <div
           className="w-10 h-10 pixel-art rounded-lg bg-cream-blush flex-shrink-0"
           style={{
-            backgroundImage: `url(${iconSrc})`,
+            backgroundImage: `url(${iconSrc}?v=11)`,
             backgroundSize: "60%",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
+            mixBlendMode: "multiply",
           }}
         />
         <div className="flex-1 min-w-0">
