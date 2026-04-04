@@ -54,7 +54,7 @@ export const DECAY_RATES = {
   health: 0.5,
 };
 
-export const DEFAULT_DECAY_SPEED = 3; // env override: NEXT_PUBLIC_STAT_DECAY_SPEED
+export const DEFAULT_DECAY_SPEED = 6; // env override: NEXT_PUBLIC_STAT_DECAY_SPEED
 export const DEFAULT_INITIAL_BALANCE = 10; // env override: NEXT_PUBLIC_INITIAL_BALANCE
 
 export const XP_PER_SERVICE = 10;
@@ -66,7 +66,7 @@ export const PET_ACTIONS: PetActionConfig[] = [
     label: "Feed",
     icon: "🍖",
     cost: 0.50,
-    cooldown: 10,
+    cooldown: 5,
     effects: { hunger: 30 },
   },
   {
@@ -74,7 +74,7 @@ export const PET_ACTIONS: PetActionConfig[] = [
     label: "Play",
     icon: "🎾",
     cost: 0,
-    cooldown: 15,
+    cooldown: 8,
     effects: { happiness: 20, energy: -10 },
   },
   {
@@ -82,7 +82,7 @@ export const PET_ACTIONS: PetActionConfig[] = [
     label: "Sleep",
     icon: "💤",
     cost: 0,
-    cooldown: 30,
+    cooldown: 10,
     effects: { energy: 30, hunger: -10 },
   },
   {
@@ -90,13 +90,13 @@ export const PET_ACTIONS: PetActionConfig[] = [
     label: "Medicine",
     icon: "💊",
     cost: 1.00,
-    cooldown: 60,
+    cooldown: 20,
     effects: { health: 40 },
   },
 ];
 
-export const AUTO_INCOME_INTERVAL_MIN = 20; // seconds
-export const AUTO_INCOME_INTERVAL_MAX = 40; // seconds
+export const AUTO_INCOME_INTERVAL_MIN = 8; // seconds
+export const AUTO_INCOME_INTERVAL_MAX = 20; // seconds
 
 export const ACHIEVEMENTS: Achievement[] = [
   {
