@@ -18,12 +18,20 @@ import {
   getPetReactionPrompt,
 } from "@cryptogotchi/ai-service";
 import { withMockPayment } from "./x402-mock";
-import { withX402Live, createRouteConfig } from "./x402-server";
+import { withX402Live, createRouteConfig, declareDiscovery } from "./x402-server";
+
+interface DiscoveryMetadata {
+  inputExample?: Record<string, unknown>;
+  inputSchema?: Record<string, unknown>;
+  outputExample?: Record<string, unknown>;
+  outputSchema?: Record<string, unknown>;
+}
 
 interface ServiceHandlerOptions {
   buildUserPrompt: (body: Record<string, unknown>) => string;
   formatResponse: (aiText: string, petReaction: string) => Record<string, unknown>;
   validateBody?: (body: Record<string, unknown>) => string | null;
+  discovery?: DiscoveryMetadata;
 }
 
 type RouteHandler = (req: NextRequest) => Promise<NextResponse>;
@@ -134,7 +142,19 @@ export function createServiceHandler(
   }
 
   // Live mode: wrap with real x402 payment verification
-  const routeConfig = createRouteConfig(price, description);
+  const extensions = options.discovery
+    ? declareDiscovery({
+        input: options.discovery.inputExample,
+        inputSchema: options.discovery.inputSchema,
+        outputExample: options.discovery.outputExample,
+        outputSchema: options.discovery.outputSchema,
+      })
+    : null;
+  const routeConfig = createRouteConfig(
+    price,
+    description,
+    extensions ?? undefined,
+  );
   return createLiveHandler(handler, routeConfig);
 }
 

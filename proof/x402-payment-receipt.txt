@@ -1,0 +1,29 @@
+CryptoGotchi x402 Live Payment Proof
+=====================================
+Date: 2026-04-04T06:20:10.946Z
+Network: Base Sepolia (eip155:84532)
+
+Buyer Wallet: 0x3996356EB5Db8Ba32eB6Ef86445A3873360191eD
+Receiver (PAY_TO): 0xc6b7835749d53fb16d31a3b86fef5be30c8e70fe
+
+TX Hash: 0x871c9c20e5436bfe294c4da8acfa2b4e6e4842ac3fbccf67cad8d24ee0eb5983
+Basescan: https://sepolia.basescan.org/tx/0x871c9c20e5436bfe294c4da8acfa2b4e6e4842ac3fbccf67cad8d24ee0eb5983
+
+Facilitator: https://x402.org/facilitator
+Service: /api/services/summarize (AI text summarization)
+Price: $0.01 USDC
+
+Payment-Response Header (base64):
+eyJzdWNjZXNzIjp0cnVlLCJwYXllciI6IjB4Mzk5NjM1NkVCNURiOEJhMzJlQjZFZjg2NDQ1QTM4NzMzNjAxOTFlRCIsInRyYW5zYWN0aW9uIjoiMHg4NzFjOWMyMGU1NDM2YmZlMjk0YzRkYThhY2ZhMmI0ZTZlNDg0MmFjM2ZiY2NmNjdjYWQ4ZDI0ZWUwZWI1OTgzIiwibmV0d29yayI6ImVpcDE1NTo4NDUzMiJ9
+
+Decoded:
+{
+  "success": true,
+  "payer": "0x3996356EB5Db8Ba32eB6Ef86445A3873360191eD",
+  "transaction": "0x871c9c20e5436bfe294c4da8acfa2b4e6e4842ac3fbccf67cad8d24ee0eb5983",
+  "network": "eip155:84532"
+}
+
+Server Flow:
+  POST /api/services/summarize 402 in 3.4s   (Payment Required)
+  POST /api/services/summarize 200 in 1061ms (Payment Accepted)

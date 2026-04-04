@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "x402:demo": "tsx --env-file=../../.env.local scripts/live-x402-demo.ts",
+    "ows:demo": "echo 'Run via WSL: wsl bash apps/web/scripts/ows-demo.sh' && bash scripts/ows-demo.sh"
   },
   "dependencies": {
     "@cryptogotchi/ai-service": "workspace:*",
@@ -23,14 +25,18 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@x402/fetch": "^2.9.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.21.0",
+    "typescript": "^5",
+    "viem": "^2.47.10"
   },
   "optionalDependencies": {
     "@x402/core": "^2.3.0",
     "@x402/evm": "^2.0.0",
+    "@x402/extensions": "^2.9.0",
     "@x402/next": "^2.3.0"
   }
 }

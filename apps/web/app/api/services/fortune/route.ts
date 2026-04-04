@@ -14,4 +14,20 @@ export const POST = createServiceHandler("fortune", {
     ],
     pet_reaction: petReaction,
   }),
+  discovery: {
+    inputExample: { wallet_address: "0x1234..." },
+    inputSchema: {
+      properties: {
+        wallet_address: { type: "string", description: "Optional wallet address for personalized fortune" },
+      },
+    },
+    outputExample: { fortune: "The stars align for your portfolio.", lucky_token: "ETH", pet_reaction: "I see great things!" },
+    outputSchema: {
+      properties: {
+        fortune: { type: "string" },
+        lucky_token: { type: "string" },
+        pet_reaction: { type: "string" },
+      },
+    },
+  },
 });

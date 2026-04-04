@@ -1,0 +1,97 @@
+=========================================
+  CryptoGotchi OWS Local Proof Demo
+  2026-04-04T07:29:08Z
+=========================================
+
+[0;36m[INFO][0m Checking OWS CLI installation...
+[0;32m[PASS][0m OWS CLI found: ows 1.2.4 (2fbd309)
+
+[0;36m[INFO][0m Wallet 'cryptogotchi-pet' already exists, skipping creation
+[0;32m[PASS][0m Create Wallet (already exists)
+
+--- Step 2: List Wallets ---
+[0;36m[INFO][0m Running: ows wallet list
+
+ID:      4d9af963-44b3-407e-a38b-0a817b1f610c
+Name:    cryptogotchi-pet
+Secured: ✓ (encrypted)
+  eip155:1 (ethereum) → 0xDe84fd912587D29418cf1d19Ce7e00F2c1c99972
+  solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp (solana) → 6upYC1WBprD8N66vf6E4sWZe2N2SDu3okjHpigW859MC
+  bip122:000000000019d6689c085ae165831e93 (bitcoin) → bc1qqgnhexdpad88tae9jqlfj82etmw4nh0yxhyf6d
+  cosmos:cosmoshub-4 (cosmos) → cosmos1h0w54enqtjdfc0acjgt75edvpzfulqmct29wy7
+  tron:mainnet (tron) → TCPjrJPdEEXU9LHDqLLJJJ8bLmETjqFDdP
+  ton:mainnet (ton) → UQCiduGiPeBfdjltu57WcXO7iBcaz58owiqTzbUiWrupDKtr
+  fil:mainnet (filecoin) → f14t5vassmqk4zk3ogtvz43bzpicgtgbd4vzs2f5q
+  sui:mainnet (sui) → 0xa0f886d0a760be08312ce57ae3fcc41088743d2018082474cddba16ea81d7e14
+  xrpl:mainnet (xrpl) → r3vUVyBQ2CMVQZVYX64jc8SMA26HjsdciK
+Created: 2026-04-04T07:24:29.192796241+00:00
+
+
+[0;32m[PASS][0m List Wallets
+
+--- Step 3: Wallet Info ---
+[0;36m[INFO][0m Running: ows wallet info
+
+Vault path: /home/eren/.ows
+
+Supported chains:
+Chain        Namespace  Coin Type 
+-----        ---------  --------- 
+evm eip155     60        
+solana solana     501       
+bitcoin bip122     0         
+cosmos cosmos     118       
+tron tron       195       
+ton ton        607       
+filecoin fil        461       
+sui sui        784       
+xrpl xrpl       144       
+
+[0;32m[PASS][0m Wallet Info
+
+--- Step 4: Sign Message (Ethereum) ---
+[0;36m[INFO][0m Running: ows sign message --wallet cryptogotchi-pet --chain ethereum --message "CryptoGotchi says: Feed me crypto!"
+
+f7ab1e832135f36312457f98dd9cec442bbbd98c4477143ae9a182b4e79e681477b9d50d9a4cdea6522d98ff2378b6750fc1d4e45f8fa44ad48802ab2f62fee01b
+
+[0;32m[PASS][0m Sign Message (Ethereum)
+
+[0;36m[INFO][0m Key 'cryptogotchi-agent' already exists, skipping creation
+[0;32m[PASS][0m Create API Key (already exists)
+
+--- Step 6: List Keys ---
+[0;36m[INFO][0m Running: ows key list
+
+ID:       46a3723c-4a7e-425f-876a-c8026a78786b
+Name:     cryptogotchi-agent
+Wallets:  4d9af963-44b3-407e-a38b-0a817b1f610c
+Policies: 
+Created:  2026-04-04T07:26:18.761572428+00:00
+
+
+[0;32m[PASS][0m List Keys
+
+--- Step 7: Check Balance ---
+[0;36m[INFO][0m Running: ows fund balance --wallet cryptogotchi-pet
+
+No tokens found for 0xDe84fd912587D29418cf1d19Ce7e00F2c1c99972 on base
+
+[0;32m[PASS][0m Check Balance
+
+--- Step 8: Discover x402 Services ---
+[0;36m[INFO][0m Running: ows pay discover
+
+error: [HttpTransport] error sending request for url (https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources?limit=100&offset=0)
+
+[0;31m[FAIL][0m Discover x402 Services (exit code: 0)
+[0;33m[WARN][0m Command may not be supported in this OWS version. Continuing...
+
+=========================================
+  Demo Complete
+  Results: 7/8 steps passed
+  Vault: ~/.ows/ (AES-256-GCM encrypted)
+  Wallet: cryptogotchi-pet
+  Timestamp: 2026-04-04T07:29:08Z
+=========================================
+
+[0;32m[PASS][0m Core OWS functionality verified (7/8)

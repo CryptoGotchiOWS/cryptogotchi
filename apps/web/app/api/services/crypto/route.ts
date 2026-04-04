@@ -20,4 +20,21 @@ export const POST = createServiceHandler("crypto", {
       pet_reaction: petReaction,
     };
   },
+  discovery: {
+    inputExample: { query: "What is the current sentiment on Bitcoin?" },
+    inputSchema: {
+      properties: {
+        query: { type: "string", description: "Crypto market question" },
+      },
+      required: ["query"],
+    },
+    outputExample: { analysis: "Market analysis based on current trends.", sentiment: "bullish", pet_reaction: "To the moon!" },
+    outputSchema: {
+      properties: {
+        analysis: { type: "string" },
+        sentiment: { type: "string", description: "Market sentiment assessment" },
+        pet_reaction: { type: "string" },
+      },
+    },
+  },
 });

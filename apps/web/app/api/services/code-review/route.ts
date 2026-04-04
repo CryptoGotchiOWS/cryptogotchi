@@ -25,4 +25,22 @@ export const POST = createServiceHandler("code-review", {
       pet_reaction: petReaction,
     };
   },
+  discovery: {
+    inputExample: { code: "function add(a, b) { return a + b; }", language: "javascript" },
+    inputSchema: {
+      properties: {
+        code: { type: "string", description: "Code to review (max 20000 chars)" },
+        language: { type: "string", description: "Programming language (optional)" },
+      },
+      required: ["code"],
+    },
+    outputExample: { review: "Clean function with good naming.", score: 8, pet_reaction: "Nice code!" },
+    outputSchema: {
+      properties: {
+        review: { type: "string" },
+        score: { type: "number", description: "Code quality score 1-10" },
+        pet_reaction: { type: "string" },
+      },
+    },
+  },
 });
