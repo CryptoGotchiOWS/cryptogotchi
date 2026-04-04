@@ -1,4 +1,4 @@
-import type { ServiceConfig } from "./types";
+import type { ServiceConfig, PetActionConfig } from "./types";
 
 export const NETWORK_CAIP2 = "eip155:84532"; // Base Sepolia
 export const FACILITATOR_URL = "https://x402.org/facilitator";
@@ -59,3 +59,41 @@ export const DEFAULT_INITIAL_BALANCE = 10; // env override: NEXT_PUBLIC_INITIAL_
 
 export const XP_PER_SERVICE = 10;
 export const XP_PER_LEVEL = 100;
+
+export const PET_ACTIONS: PetActionConfig[] = [
+  {
+    type: "feed",
+    label: "Feed",
+    icon: "🍖",
+    cost: 0.50,
+    cooldown: 10,
+    effects: { hunger: 30 },
+  },
+  {
+    type: "play",
+    label: "Play",
+    icon: "🎾",
+    cost: 0,
+    cooldown: 15,
+    effects: { happiness: 20, energy: -10 },
+  },
+  {
+    type: "sleep",
+    label: "Sleep",
+    icon: "💤",
+    cost: 0,
+    cooldown: 30,
+    effects: { energy: 30, hunger: -10 },
+  },
+  {
+    type: "medicine",
+    label: "Medicine",
+    icon: "💊",
+    cost: 1.00,
+    cooldown: 60,
+    effects: { health: 40 },
+  },
+];
+
+export const AUTO_INCOME_INTERVAL_MIN = 20; // seconds
+export const AUTO_INCOME_INTERVAL_MAX = 40; // seconds

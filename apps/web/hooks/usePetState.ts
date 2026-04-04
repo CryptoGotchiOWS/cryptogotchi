@@ -1,13 +1,14 @@
 "use client";
 
 import { useReducer, useEffect, useCallback, useRef } from "react";
-import type { PetState, PetMood, BalanceState } from "@cryptogotchi/shared";
+import type { PetState, PetMood, BalanceState, PetActionEffect } from "@cryptogotchi/shared";
 import {
   createInitialPetState,
   applyDecay,
   getMood,
   getBalanceState,
   processIncome as engineProcessIncome,
+  applyCareAction as engineApplyCareAction,
 } from "@cryptogotchi/pet-engine";
 
 const STORAGE_KEY = "cryptogotchi-pet-state";
@@ -16,6 +17,7 @@ type Action =
   | { type: "DECAY" }
   | { type: "PROCESS_INCOME"; amount: number }
   | { type: "UPDATE_STATS"; payload: Partial<PetState> }
+  | { type: "CARE_ACTION"; effects: PetActionEffect; cost: number }
   | { type: "REVIVE" }
   | { type: "SET_STATE"; payload: PetState };
 
@@ -26,6 +28,9 @@ function petReducer(state: PetState, action: Action): PetState {
 
     case "PROCESS_INCOME":
       return engineProcessIncome(state, action.amount);
+
+    case "CARE_ACTION":
+      return engineApplyCareAction(state, action.effects, action.cost);
 
     case "UPDATE_STATS":
       return { ...state, ...action.payload, lastUpdated: Date.now() };
@@ -118,9 +123,13 @@ export function usePetState() {
     dispatch({ type: "PROCESS_INCOME", amount });
   }, []);
 
+  const careAction = useCallback((effects: PetActionEffect, cost: number) => {
+    dispatch({ type: "CARE_ACTION", effects, cost });
+  }, []);
+
   const revive = useCallback(() => {
     dispatch({ type: "REVIVE" });
   }, []);
 
-  return { state, mood, balanceState, dispatch, processIncome, revive };
+  return { state, mood, balanceState, dispatch, processIncome, careAction, revive };
 }

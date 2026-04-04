@@ -22,9 +22,9 @@ export default function WalletInfo({ state, balanceState }: WalletInfoProps) {
 
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      {/* Wallet address mock */}
-      <div className="font-mono text-xs text-dark-gray bg-white/60 px-3 py-1.5 rounded-lg">
-        0x1a2b...3c4d
+      {/* Operator identity */}
+      <div className="font-pixel text-[7px] text-dusty-sage bg-white/60 px-3 py-1.5 rounded-lg">
+        OPERATOR
       </div>
 
       {/* Balance */}

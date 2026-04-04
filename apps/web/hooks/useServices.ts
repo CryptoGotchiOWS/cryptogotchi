@@ -145,5 +145,9 @@ export function useServices(onIncome: (amount: number) => void) {
     }));
   }, []);
 
-  return { callService, getServiceState, transactions, clearResult };
+  const addTransaction = useCallback((tx: Transaction) => {
+    setTransactions((prev) => [tx, ...prev]);
+  }, []);
+
+  return { callService, getServiceState, transactions, clearResult, addTransaction };
 }

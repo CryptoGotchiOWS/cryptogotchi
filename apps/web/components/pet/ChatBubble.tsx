@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useMemo } from "react";
 import type { PetMood, BalanceState } from "@cryptogotchi/shared";
-import { getRandomDialogue, getBalanceDialogue } from "@cryptogotchi/pet-engine";
+import { getRandomDialogue, getBalanceDialogue, getCustomerDialogue } from "@cryptogotchi/pet-engine";
 
 interface ChatBubbleProps {
   mood: PetMood;
   balanceState: BalanceState;
   petReaction?: string | null;
+  customerEvent?: boolean;
 }
 
-export default function ChatBubble({ mood, balanceState, petReaction }: ChatBubbleProps) {
+export default function ChatBubble({ mood, balanceState, petReaction, customerEvent }: ChatBubbleProps) {
   const [tick, setTick] = useState(0);
 
   // Rotate dialogues every 5 seconds via interval (setState only in callback, not synchronously)
@@ -24,8 +25,9 @@ export default function ChatBubble({ mood, balanceState, petReaction }: ChatBubb
   // Derive message purely from props + tick counter
   const message = useMemo(() => {
     if (petReaction) return petReaction;
+    if (customerEvent) return getCustomerDialogue();
     return tick % 2 === 0 ? getRandomDialogue(mood) : getBalanceDialogue(balanceState);
-  }, [petReaction, tick, mood, balanceState]);
+  }, [petReaction, customerEvent, tick, mood, balanceState]);
 
   return (
     <div className="chat-bubble max-w-[200px]">

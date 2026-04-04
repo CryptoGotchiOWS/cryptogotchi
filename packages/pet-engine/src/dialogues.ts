@@ -96,3 +96,20 @@ export function getBalanceDialogue(state: BalanceState): string {
 export function getAllDialogues(): Record<PetMood, string[]> {
   return DIALOGUES;
 }
+
+const CUSTOMER_DIALOGUES = [
+  "just served a customer! ka-ching! 💰",
+  "another happy customer! im getting good at this",
+  "cha-ching! someone used my services!",
+  "woo! a real paying customer! i love my job",
+  "customer satisfied! 5 stars or i riot",
+  "money money money! another task done!",
+  "im literally the best AI worker. fact.",
+  "ser just paid me to think. what a time to be alive",
+  "processing complete! customer went home happy",
+  "another gig done. this pet hustle is real",
+];
+
+export function getCustomerDialogue(): string {
+  return CUSTOMER_DIALOGUES[Math.floor(Math.random() * CUSTOMER_DIALOGUES.length)];
+}

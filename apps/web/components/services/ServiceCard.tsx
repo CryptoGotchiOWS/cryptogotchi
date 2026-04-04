@@ -12,6 +12,7 @@ interface ServiceCardProps {
   petReaction: string | null;
   onSubmit: (type: ServiceType, body: Record<string, unknown>) => void;
   onClear: (type: ServiceType) => void;
+  customers?: number;
 }
 
 const ICON_MAP: Record<string, string> = {
@@ -37,10 +38,13 @@ export default function ServiceCard({
   petReaction,
   onSubmit,
   onClear,
+  customers = 0,
 }: ServiceCardProps) {
   const [input, setInput] = useState("");
   const [language, setLanguage] = useState("javascript");
+  const [showTestInput, setShowTestInput] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const earned = customers * parseFloat(service.price);
 
   const handleSubmit = () => {
     const body: Record<string, unknown> = {};
@@ -50,7 +54,6 @@ export default function ServiceCard({
         body.text = input;
         break;
       case "fortune":
-        body.wallet_address = "0x1a2b3c4d5e6f";
         break;
       case "code-review":
         if (!input.trim()) return;
@@ -68,7 +71,7 @@ export default function ServiceCard({
   const iconSrc = ICON_MAP[service.type];
 
   return (
-    <div className="service-card bg-white/70 rounded-xl p-4 flex flex-col gap-3 border border-sage-mist/50">
+    <div className="service-card glass-panel rounded-xl p-4 flex flex-col gap-3 border border-sage-mist/50">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div
@@ -88,8 +91,24 @@ export default function ServiceCard({
         </span>
       </div>
 
+      {/* Customer metrics */}
+      <div className="flex items-center justify-between text-[9px] font-mono px-1 py-1.5 bg-fog-gray/60 rounded-lg">
+        <span className="text-dark-gray">Customers: <span className="font-bold text-charcoal">{customers}</span></span>
+        <span className="text-success font-bold">+${earned.toFixed(2)}</span>
+      </div>
+
+      {/* Test input toggle */}
+      {!showTestInput && !result && (
+        <button
+          onClick={() => setShowTestInput(true)}
+          className="text-[9px] text-dusty-sage hover:text-charcoal transition-colors cursor-pointer self-start"
+        >
+          Test Service &rarr;
+        </button>
+      )}
+
       {/* Input area */}
-      {service.type === "fortune" ? null : (
+      {!showTestInput ? null : service.type === "fortune" ? null : (
         <div className="flex flex-col gap-1.5">
           {service.type === "code-review" && (
             <select
@@ -129,23 +148,25 @@ export default function ServiceCard({
       )}
 
       {/* Submit button */}
-      <button
-        onClick={handleSubmit}
-        disabled={isLoading || (service.type !== "fortune" && !input.trim())}
-        className="
-          w-full font-pixel text-[8px] py-2.5 rounded-lg
-          bg-peach-sand text-warm-brown
-          hover:bg-caramel hover:text-white
-          disabled:opacity-40 disabled:cursor-not-allowed
-          transition-all active:scale-[0.98] cursor-pointer
-        "
-      >
-        {isLoading ? (
-          <span className="animate-pixel-pulse">Processing...</span>
-        ) : (
-          `Use Service ($${service.price})`
-        )}
-      </button>
+      {showTestInput && (
+        <button
+          onClick={handleSubmit}
+          disabled={isLoading || (service.type !== "fortune" && !input.trim())}
+          className="
+            w-full font-pixel text-[8px] py-2 rounded-lg
+            bg-sage-mist/60 text-dark-gray
+            hover:bg-dusty-sage hover:text-white
+            disabled:opacity-40 disabled:cursor-not-allowed
+            transition-all active:scale-[0.98] cursor-pointer
+          "
+        >
+          {isLoading ? (
+            <span className="animate-pixel-pulse">Processing...</span>
+          ) : (
+            "Test Service"
+          )}
+        </button>
+      )}
 
       {/* Pet reaction */}
       <AnimatePresence>
