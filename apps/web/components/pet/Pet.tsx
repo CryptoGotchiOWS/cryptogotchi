@@ -62,9 +62,11 @@ export default function Pet({ mood, balanceState, size = 160 }: PetProps) {
 
   const breatheClass = getBreatheClass(mood, balanceState);
 
+  const isDead = balanceState === "dead";
+
   return (
     <div
-      className={`${breatheClass} pixel-art ${animClass}`}
+      className={`${breatheClass} pixel-art ${animClass} ${isDead ? "rounded-lg" : ""}`}
       style={{
         width: size,
         height: size,
@@ -72,6 +74,7 @@ export default function Pet({ mood, balanceState, size = 160 }: PetProps) {
         backgroundSize: `${frames * 100}% 100%`,
         backgroundRepeat: "no-repeat",
         backgroundPosition: "0 0",
+        ...(isDead ? { filter: "grayscale(1) contrast(0.7) brightness(1.1)", mixBlendMode: "multiply" as const } : {}),
       }}
       role="img"
       aria-label={`Pet is ${mood}`}
